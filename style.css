@@ -1,8 +1,13 @@
 #excelInput {
-    font-size: large;
+    margin: 20px 0;
+    border: 1px solid gray;
+    width: 100%;
 }
 
 #descripcion,
-#precio {
+#precio,
+#listaDescripcion,
+#listaPrecio,
+li {
     display: inline;
 }

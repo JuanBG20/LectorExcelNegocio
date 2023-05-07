@@ -1,45 +1,51 @@
 const excelInput = document.getElementById("excelInput");
 
-const descripcion = document.getElementById("descripcion");
-const precio = document.getElementById("precio");
+const listaDescripcion = document.getElementById("listaDescripcion");
+const listaPrecio = document.getElementById("listaPrecio");
+
+const tableHead = document.getElementById("tableHead");
+const tableBody = document.getElementById("tableBody");
 
 excelInput.addEventListener("change", async () => {
     const content = await readXlsxFile(excelInput.files[0]);
 
-    Objeto(content);
+    Excel(content);
 });
 
-function Objeto(content) {
+function Excel(content) {
     const excel = {
-        content: content,
-        header: content[5],
-        rows: content.slice(10)
+        header: () => {
+            content[5].map(header => {
+                if(header != null && header != "Codigo Barra") {
+                    const td = document.createElement("td");
+                
+                    td.innerText = header;
+
+                    tableHead.appendChild(td);
+                }
+            })
+        },
+        
+        descripcion_precio: (rows) => {
+            rows.map(row => {
+                tableBody.innerHTML += `
+                    <tr>
+                        <td>${row[1]}</td>
+                        <td>${CalcularPrecio(row[2], 21, 100)}</td>
+                    </tr>
+                `
+            })
+        },
+
+        rows: content.slice(10),
     };
 
-    const funcionesExcel = {
-        row: (rows) => {
-            rows.map(row => console.log(row));
-        },
-
-        descripcion: (rows) => {
-            rows.map(row => {
-                descripcion.innerText += row;
-            })
-        },
-    
-        precio: (rows) => {
-            rows.map(row => {
-                CalcularPrecio(row[2], 21, 100);
-            })
-        }
-    }
-
-    funcionesExcel.descripcion(excel.rows);
-    funcionesExcel.precio(excel.rows);
+    excel.header();
+    excel.descripcion_precio(excel.rows);
 }
 
 function CalcularPrecio(precio, iva, ganancia) {
     let precioFinal = ((precio * (iva / 100)) + precio) * (ganancia / 100);
 
-    
+    return precioFinal;
 }
