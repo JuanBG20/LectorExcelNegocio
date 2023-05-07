@@ -1,0 +1,8 @@
+#excelInput {
+    font-size: large;
+}
+
+#descripcion,
+#precio {
+    display: inline;
+}
