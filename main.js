@@ -11,9 +11,8 @@ const botonBuscador = document.getElementById("botonBuscador");
 const cuadroBusqueda = document.getElementById("inputBuscador");
 
 excelInput.addEventListener("change", async () => {
-    /* const content = await readXlsxFile(excelInput.files[0]); */
-    const content = await XLSX.read(excelInput.files[0]);
-
+    const content = await readXlsxFile(excelInput.files[0]);
+    
     Excel(content);
 });
 
