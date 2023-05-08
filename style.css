@@ -4,10 +4,23 @@
     width: 100%;
 }
 
-#descripcion,
-#precio,
-#listaDescripcion,
-#listaPrecio,
-li {
-    display: inline;
+h2 {
+    color: lightslategray;
+    text-decoration: underline;
+}
+
+#botonBuscador {
+    color: black;
+}
+
+#botonBuscador:hover {
+    color: white;
+}
+
+table {
+    margin-top: 20px;
+}
+
+.ocultar {
+    display: none;
 }
