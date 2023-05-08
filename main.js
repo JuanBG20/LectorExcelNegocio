@@ -10,29 +10,23 @@ const tableBody = document.getElementById("tableBody");
 const botonBuscador = document.getElementById("botonBuscador");
 const cuadroBusqueda = document.getElementById("inputBuscador");
 
-excelInput.addEventListener("change", async () => {
-    const content = await readXlsxFile(excelInput.files[0]);
-    
-    Excel(content);
-});
-
 botonBuscador.addEventListener("click", () => {
-    const filas = document.querySelectorAll("tbody>tr");
-    let filter = cuadroBusqueda.value.toLowerCase();
-    
-    filas.forEach(fila => {
-        const columna = fila.querySelectorAll("td")[0];
-        const columnaPrecio = fila.querySelectorAll("td")[1];
-        let producto = columna.textContent.toLowerCase();
+    tableBody.innerHTML = "";
+    tableHead.innerHTML = "";
 
-        if(producto.indexOf(filter) > -1) {
-            fila.style.display = "";
-            columnaPrecio.style.display = "";
-        } else {
-            fila.style.display = "none";
-            columnaPrecio.style.display = "none";
-        }
-    });
+    const file = excelInput.files[0];
+    const reader = new FileReader();
+
+    reader.onload = e => {
+        const data = new Uint8Array(e.target.result);
+        const wb = XLSX.read(data, {type: "array"});
+        const sheet = wb.Sheets[wb.SheetNames[0]];
+        const arrayData = XLSX.utils.sheet_to_json(sheet, {header: 1});
+    
+        Excel(arrayData);
+    };
+
+    reader.readAsArrayBuffer(file);
 });
 
 function Excel(content) {
@@ -49,20 +43,26 @@ function Excel(content) {
         
         descripcion_precio: (rows) => {
             rows.map(row => {
-                tableBody.innerHTML += `
-                    <tr>
-                        <td class="articulos">${row[1]}</td>
-                        <td>${CalcularPrecio(row[2], 21, 2)}</td>
-                    </tr>
-                `
+                if(row != "" && row.length != 1) {
+                    const producto = row[1];
+
+                    if(producto.toLowerCase().includes(cuadroBusqueda.value.toLowerCase())) {
+                        tableBody.innerHTML += `
+                            <tr>
+                                <td>${producto}</td>
+                                <td>${CalcularPrecio(row[2], 21, 2)}</td>
+                            </tr>
+                        `
+                    }
+                }
             })
         },
 
-        rows: content.slice(10),
+        rows: content.slice(10)
     };
-
+    
     excel.header();
-    excel.descripcion_precio(excel.rows);
+    excel.descripcion_precio(excel.rows); 
 }
 
 function CalcularPrecio(precio, iva, ganancia) {
